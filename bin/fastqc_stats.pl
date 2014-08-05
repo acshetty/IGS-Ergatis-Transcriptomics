@@ -55,7 +55,7 @@ use warnings;
 use Getopt::Long qw(:config no_ignore_case no_auto_abbrev pass_through);
 use Pod::Usage;
 use File::Spec;
-
+use Cwd ;
 ##############################################################################
 ### Constants
 ##############################################################################
@@ -92,7 +92,7 @@ pod2usage( -msg => $sHelpHeader, -exitval => 1) if $hCmdLineOption{'help'};
 ## make sure everything passed was peachy
 check_parameters(\%hCmdLineOption);
 
-my ($sOutDir);
+my ($sOutDir, $sPWD);
 my ($sCmd, $sPrefix);
 my (@file1, @file2);
 my $bDebug   = (defined $hCmdLineOption{'debug'}) ? TRUE : FALSE;
@@ -119,17 +119,21 @@ if (defined $hCmdLineOption{'outdir'}) {
 }
 
 $sOutDir = File::Spec->canonpath($sOutDir);
+$sPWD = getcwd();
 
 #($_, $_, $sPrefix) = File::Spec->splitpath($hCmdLineOption{'seq1file'});
 
 @file1 = split (/,/,$hCmdLineOption{'seq1file'});
-@file2 = split (/,/,$hCmdLineOption{'seq2file'});
+if (exists $hCmdLineOption{'seq2file'}) {
+    @file2 = split (/,/,$hCmdLineOption{'seq2file'});
+}
 
-$sCmd = $hCmdLineOption{'fastqc_bin_dir'}."/fastqc " ;
+$sCmd = $hCmdLineOption{'fastqc_bin_dir'}."/fastqc --noextract " ;
 
 foreach (@file1) {
     $sCmd .= $_." ";
 }
+
 
 foreach (@file2) {
     $sCmd .= $_." ";
@@ -138,6 +142,22 @@ foreach (@file2) {
 $sCmd .= " -o ".$sOutDir;
 
 exec_command($sCmd);
+
+($bDebug || $bVerbose) ? 
+    print STDERR "\nChanging Directory to $sOutDir ...\n" : ();
+
+chdir $sOutDir or die "Error Cannot change the directory";
+
+($bDebug || $bVerbose) ? 
+    print STDERR "\nUnziping the output folder ...\n" : ();
+
+$sCmd = "unzip *_fastqc.zip";
+exec_command($sCmd);
+
+($bDebug || $bVerbose) ? 
+    print STDERR "\nChanging Directory to CWD ...\n" : ();
+
+chdir $sPWD;
 
 foreach (@file1) {
     out_format($sOutDir,$_);
