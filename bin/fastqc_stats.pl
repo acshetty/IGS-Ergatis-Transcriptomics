@@ -97,6 +97,7 @@ my ($sCmd, $sPrefix);
 my (@file1, @file2);
 my $bDebug   = (defined $hCmdLineOption{'debug'}) ? TRUE : FALSE;
 my $bVerbose = (defined $hCmdLineOption{'verbose'}) ? TRUE : FALSE;
+my @zip_files;
 
 ################################################################################
 ### Main
@@ -148,11 +149,15 @@ exec_command($sCmd);
 
 chdir $sOutDir or die "Error Cannot change the directory";
 
+@zip_files = glob("*fastqc.zip");
+
 ($bDebug || $bVerbose) ? 
     print STDERR "\nUnziping the output folder ...\n" : ();
 
-$sCmd = "unzip *_fastqc.zip";
-exec_command($sCmd);
+foreach (@zip_files) {
+    $sCmd = "unzip $_";
+    exec_command($sCmd);
+}
 
 ($bDebug || $bVerbose) ? 
     print STDERR "\nChanging Directory to CWD ...\n" : ();
