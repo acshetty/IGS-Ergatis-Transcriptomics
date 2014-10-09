@@ -88,7 +88,7 @@ check_parameters(\%hCmdLineOption);
 my ($sOutDir,$prefix);
 my ($tophat_file, $mapstat_list, $mapstat_file, $f1, $path,$key,$pipeline1,$pipeline2);
 my %bam; 
-my ($cfile,$mfile,$lfile,$rfile,$pfile,$readcount,@arr,@arr1,$p_paired,$left_count,$tot_reads,$p_mapped,$fout,$out_all);
+my ($cfile,$mfile,$lfile,$rfile,$pfile,$readcount,@arr,@arr1,$p_paired,$left_count,,$total_count,$tot_reads,$p_mapped,$fout,$out_all);
 my $right_count=0;
 my $bDebug   = (defined $hCmdLineOption{'debug'}) ? TRUE : FALSE;
 my $bVerbose = (defined $hCmdLineOption{'verbose'}) ? TRUE : FALSE;
@@ -201,6 +201,9 @@ foreach $key (sort keys (%bam)) {
     }
     
     if (exists ($bam{$key}{"prep"})) {	
+	$left_count = 0;
+	$right_count = 0;
+	$total_count = 0 ;
 	while(<$pfile>) {
 	    chomp ($_);
 	    if ($_ =~m/left_reads_in/) {
@@ -211,6 +214,11 @@ foreach $key (sort keys (%bam)) {
 	    if ($_ =~m/right_reads_in/) {
 		@arr= split (/\=/,$_);
 		$right_count = $arr[1];
+		
+	    }
+	    if ($_ =~m/reads_in/) {
+		@arr= split (/\=/,$_);
+		$total_count = $arr[1];
 		
 	    }
 	}
@@ -244,7 +252,7 @@ foreach $key (sort keys (%bam)) {
     }
 	
     ###Total reads..
-    $tot_reads = $left_count + $right_count;
+    $tot_reads = $left_count + $right_count + $total_count;
     
     ###Percent mapped..
     $p_mapped = sprintf("%.2f",eval(($readcount/$tot_reads ) * 100)); 

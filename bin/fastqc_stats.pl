@@ -93,7 +93,7 @@ pod2usage( -msg => $sHelpHeader, -exitval => 1) if $hCmdLineOption{'help'};
 check_parameters(\%hCmdLineOption);
 
 my ($sOutDir, $sPWD);
-my ($sCmd, $sPrefix);
+my ($sCmd, $sPrefix ,$zipped);
 my (@file1, @file2);
 my $bDebug   = (defined $hCmdLineOption{'debug'}) ? TRUE : FALSE;
 my $bVerbose = (defined $hCmdLineOption{'verbose'}) ? TRUE : FALSE;
@@ -155,8 +155,12 @@ chdir $sOutDir or die "Error Cannot change the directory";
     print STDERR "\nUnziping the output folder ...\n" : ();
 
 foreach (@zip_files) {
-    $sCmd = "unzip $_";
-    exec_command($sCmd);
+	$zipped = $_;
+	$zipped =~ s/.zip//;
+	if (! -d $zipped) {
+    	$sCmd = "unzip $_";
+    	exec_command($sCmd);
+	}
 }
 
 ($bDebug || $bVerbose) ? 
