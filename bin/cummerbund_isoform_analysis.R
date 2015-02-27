@@ -137,6 +137,12 @@ for( cuff.dir in dir.list ) {
 	# hacky?
 	base.name <- gsub(".sample", "", tmp, perl=TRUE)
 	samples <- unlist( strsplit(base.name, "vs" ) )
+	
+        tmp1 <- gsub("^[0-9].+",paste("X",samples[1],sep=""),samples[1],perl=TRUE)
+        tmp2 <- gsub("^[0-9].+",paste("X",samples[2],sep=""),samples[2],perl=TRUE)
+        samples[1] <- tmp1
+        samples[2] <- tmp2
+
 
 	cat("\nReading cuffdiff data...\n")
 	#cuff <- readCufflinks(dir=cuff.dir, rebuild=TRUE)
