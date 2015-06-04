@@ -274,7 +274,7 @@ foreach $key (keys (%bam)) {
 		       
 	if (exists ($bam{$key}{"prep_right"})) {	
 
-		$left_count = $bam{$key}{"prep_right"};
+		$right_count = $bam{$key}{"prep_right"};
 		
 	}
 

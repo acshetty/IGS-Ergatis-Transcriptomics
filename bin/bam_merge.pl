@@ -98,10 +98,12 @@ while(<$BamListIN>){
 	}
 }
 close $BamListIN;
+    
+
 
 #Check split bam file number
 if ($bamFileNum != ($#inBamFile + 1)){
-	print STDERR "\nSplit File number doesn't match. Exit .....\n" ;
+	die "\nSplit File number doesn't match. Exit .....\n" ;
 
 }
 
@@ -111,6 +113,13 @@ $sPrefix = $bamFileBase;
 $sPrefix =~ s/.1_1_dequence.*//;
 $sPrefix =~ s/_R1_.*//;
 $outBamFile = $sOutDir."/".$sPrefix.".accepted_hits.bam";
+
+
+if($bamFileNum == 1) {
+    symlink $inBamFile[0], $outBamFile;
+    exit ;
+}
+
 
 # start merging process
 ($bDebug || $bVerbose) ? 
@@ -128,10 +137,34 @@ for (my $i = 0; $i <= $#inBamFile; $i++) {
 	$sCmd .= " $inBamFile[$i]";
 }
 
-system($sCmd);
+exec_command($sCmd);
 			
 ($bDebug || $bVerbose) ? 
 	print STDERR "Generating file: $sPrefix.accepted_hits.bam  ..... done\n" : ();
+
+
+
+################################################################################
+### Subroutines
+################################################################################
+
+
+sub exec_command {
+        my $sCmd = shift;
+        
+        if ((!(defined $sCmd)) || ($sCmd eq "")) {
+                die "\nSubroutine::exec_command : ERROR! Incorrect command!\n";
+        }
+        
+        my $nExitCode;
+        
+        print STDERR "$sCmd\n";
+        $nExitCode = system("$sCmd");
+        if ($nExitCode != 0) {
+                die "\tERROR! Command Failed!\n\t$!\n";
+        }
+        print STDERR "\n";
+}
 
 
 ##############################################################################
