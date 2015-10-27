@@ -31,5 +31,5 @@ export PERL_MOD_DIR
 
 export PERL5LIB=/usr/local/projects/ergatis/package-Rseqv2b2//lib/perl5/
 
-    /usr/bin/perl /usr/local/projects/ergatis/package-Rseqv2b2//bin/cuffmerge.pl "$@"    
+    /usr/local/packages/Python-2.7/bin/python /usr/local/projects/ergatis/package-Rseqv2b2//bin/tophat_v2.py    
 

@@ -445,12 +445,6 @@ $;TOPHAT_BIN$;=/usr/local/bin
 $;BOWTIE_EXEC$;=/usr/local/bin/bowtie
 $;BOWTIE_BIN$;=/usr/local/bin
 
-[component tophat_v2]
-$;TOPHAT_EXEC$;=/usr/local/bin/tophat
-$;TOPHAT_BIN$;=/usr/local/bin
-$;BOWTIE_EXEC$;=/usr/local/bin/bowtie
-$;BOWTIE_BIN$;=/usr/local/bin
-
 [component cufflinks]
 $;CUFFLINKS_EXEC$;=/usr/local/bin/cufflinks
 $;CUFFLINKS_BIN$;=/usr/local/bin

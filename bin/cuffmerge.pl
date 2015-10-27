@@ -96,6 +96,14 @@ pod2usage( -msg => $sHelpHeader, -exitval => 1) if $hCmdLineOption{'help'};
 ## make sure everything passed was peachy
 check_parameters(\%hCmdLineOption);
 
+# add cufflinks_bin_dir to %ENV{PATH} if set, else '/usr/local/bin'
+if (defined $hCmdLineOption{'cufflinks_bin_dir'}){
+    $ENV{'PATH'} = $ENV{'PATH'}.':'.$hCmdLineOption{'cufflinks_bin_dir'};
+}
+else {
+    $ENV{'PATH'} = $ENV{'PATH'}.':'.BIN_DIR;
+}
+
 my (@aGtfFile, $sGtfFile, $sGtfFileList);
 my ($sOutDir, $sSampleName, $sGroupName, $sFile, $sPrefix);
 my ($fpLST);
@@ -123,6 +131,7 @@ if (defined $hCmdLineOption{'outdir'}) {
     }
 }
 $sOutDir = File::Spec->canonpath($sOutDir);
+$sPrefix = $hCmdLineOption{'prefix'};
 
 ($bDebug || $bVerbose) ? 
 	print STDERR "\nMerging Cufflinks Transcript Analysis ...\n" : ();
@@ -138,7 +147,11 @@ $sCmd .= " -g ".$hCmdLineOption{'annotation'} if ((defined $hCmdLineOption{'anno
 $sCmd .= " ".$hCmdLineOption{'args'} if (defined $hCmdLineOption{'args'});
 $sCmd .= " ".$hCmdLineOption{'gtffile'} ;
 
-#print($sCmd);
+foreach (sort keys %ENV) { 
+  print "$_  =  $ENV{$_}\n"; 
+}
+
+#print STDERR ($sCmd);
 exec_command($sCmd);
 
 ($bDebug || $bVerbose) ? 

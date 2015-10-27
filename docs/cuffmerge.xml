@@ -2,45 +2,53 @@
 
 <commandSetRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation='commandSet.xsd'>
     <commandSet type="serial">
-        <name>cuffcompare</name>
-		<command>
+	<state>incomplete</state>
+        <name>cuffmerge</name>
+	<!--PreProcessing-->
+	<command>
             <type>RunUnixCommand</type>
-            <name>cuffmerge</name>
+            <name>create output directory</name>
             <state>incomplete</state>
-            <executable>$;BIN_DIR$;/cuffmerge</executable>            
-            <param>
-                <key>--gtffile</key>
-                <value>$;I_FILE_PATH$;</value>
-            </param>
-            <param>
-                <key>--annotation</key>
-                <value>'$;ANNOTATION_FILE$;'</value>
-            </param>
-            <param>
-                <key>--prefix</key>
-                <value>$;PREFIX$;</value>
-            </param>
-            <param>
-                <key>--outdir</key>
+            <executable>mkdir</executable>
+            <arg>-p -m 777 $;OUTPUT_DIRECTORY$;</arg>
+	</command>
+	<command>
+            <type>RunUnixCommand</type>
+            <name>create temp directory</name>
+            <state>incomplete</state>
+            <executable>mkdir</executable>
+            <arg>-p -m 777 $;TMP_DIR$;</arg>
+        </command>
+	<!--Processing-->
+	<!--Iterator-->
+	<INCLUDE file="$;DOCS_DIR$;/file_iterator_template.xml" keys="$;ITERATOR_NAME$;=ITERATOR1,$;ITERATOR_XML$;=ITERATOR1_XML">
+	<!--PostProcessing-->
+	<command>
+            <type>RunUnixCommand</type>
+            <name>create merged gtf list</name>
+            <state>incomplete</state>
+            <executable>$;BIN_DIR$;/generate_list_file</executable>
+            <param>  
+                <key>--directory</key>
                 <value>$;OUTPUT_DIRECTORY$;</value>
             </param>
-            <param>
-                <key>--cufflinks_bin_dir</key>
-                <value>$;CUFFLINKS_BIN_DIR$;</value>
+            <param>  
+                <key>--regex</key>
+                <value>".*merged.gtf"</value>
+            </param>
+            <param>  
+                <key>--output_list</key>
+                <value>$;OUTPUT_COMBINED_GTF$;</value>
             </param>
             <param>
-                <key>--args</key>
-                <value>'$;OTHER_PARAMS$;'</value>
+		<key>stdout</key>
+		<value>$;TMP_DIR$;/generate_list_file.stdout</value>
             </param>
             <param>
-                <key>stdout</key>
-                <value>$;OUTPUT_DIRECTORY$;/cuffmerge.stdout</value>
+		<key>stderr</key>
+		<value>$;TMP_DIR$;/generate_list_file.stderr</value>
             </param>
-            <param>
-                <key>stderr</key>
-                <value>$;OUTPUT_DIRECTORY$;/cuffmerge.stderr</value>
-            </param>
-            <arg>$;OTHER_ARGS$;</arg>
+            <arg>--v</arg>
         </command>
     </commandSet>
 </commandSetRoot>
